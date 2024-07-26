@@ -1,10 +1,13 @@
 package com.jpdev01.rinha.financial;
 
 import com.jpdev01.rinha.repository.TransactionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/clientes")
@@ -33,9 +36,36 @@ public class FinancialController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    @GetMapping("/{id}/transacoes")
-    public ResponseEntity<String> get() {
-        transactionRepository.findAll();
-        return ResponseEntity.ok("ok");
+    @GetMapping("/{id}/extrato")
+    public ResponseEntity<FinancialResponse> extrato(@PathVariable("id") Long idCliente) {
+        Flux<Transaction> transactionFlux = transactionRepository.findAllByIdCliente(idCliente);
+
+        BigDecimal total = getTotal(transactionFlux);
+
+        FinancialBalanceResponse balance = new FinancialBalanceResponse(
+                total,
+                OffsetDateTime.now(),
+                1000L
+        );
+
+        List<FinancialTransactionResponse> financialTransactionResponses = transactionFlux
+                .map(transaction -> new FinancialTransactionResponse(
+                        transaction.getValor(),
+                        transaction.getTipo(),
+                        transaction.getDescricao(),
+                        OffsetDateTime.now()
+                ))
+                .collectList()
+                .block();
+
+        FinancialResponse response = new FinancialResponse(balance, financialTransactionResponses);
+        return ResponseEntity.ok(response);
+    }
+
+    private BigDecimal getTotal(Flux<Transaction> transactions) {
+        return transactions
+                .map(Transaction::getValor)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .block();
     }
 }
