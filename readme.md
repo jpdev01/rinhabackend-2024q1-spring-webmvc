@@ -1,7 +1,7 @@
 # Aplicação Rinha de Backend, Segunda Edição: 2024/Q1 - Controle de Concorrência
 
-## Vinicius Ville
-- `java 21`
+## João Pedro Truchinski Borba
+- `java 17`
 - `Spring Boot 3 - Web MVC`
 - `JDBC API`
 - `PostgreSQL`
