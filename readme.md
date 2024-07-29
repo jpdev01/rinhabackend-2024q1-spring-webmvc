@@ -11,5 +11,3 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 
 [Repositorio da Rinha](https://github.com/zanfranceschi/rinha-de-backend-2024-q1)
-
-Inspiração: https://github.com/viniville/rinhabackend-2024q1-spring-webmvc/blob/main/README.md
