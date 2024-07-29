@@ -1,5 +1,6 @@
 package com.jpdev01.rinha.financial;
 
+import com.jpdev01.rinha.financial.dto.*;
 import com.jpdev01.rinha.repository.TransactionRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,19 +38,19 @@ public class FinancialController {
     }
 
     @GetMapping("/{id}/extrato")
-    public ResponseEntity<FinancialResponse> extrato(@PathVariable("id") Long idCliente) {
+    public ResponseEntity<FinancialResponseDTO> extrato(@PathVariable("id") Long idCliente) {
         Flux<Transaction> transactionFlux = transactionRepository.findAllByIdCliente(idCliente);
 
         BigDecimal total = getTotal(transactionFlux);
 
-        FinancialBalanceResponse balance = new FinancialBalanceResponse(
+        FinancialBalanceResponseDTO balance = new FinancialBalanceResponseDTO(
                 total,
                 OffsetDateTime.now(),
                 1000L
         );
 
-        List<FinancialTransactionResponse> financialTransactionResponses = transactionFlux
-                .map(transaction -> new FinancialTransactionResponse(
+        List<FinancialTransactionResponseDTO> financialTransactionResponses = transactionFlux
+                .map(transaction -> new FinancialTransactionResponseDTO(
                         transaction.getValor(),
                         transaction.getTipo(),
                         transaction.getDescricao(),
@@ -58,7 +59,7 @@ public class FinancialController {
                 .collectList()
                 .block();
 
-        FinancialResponse response = new FinancialResponse(balance, financialTransactionResponses);
+        FinancialResponseDTO response = new FinancialResponseDTO(balance, financialTransactionResponses);
         return ResponseEntity.ok(response);
     }
 

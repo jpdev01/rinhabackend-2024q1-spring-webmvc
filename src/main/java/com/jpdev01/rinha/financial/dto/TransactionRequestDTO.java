@@ -1,4 +1,4 @@
-package com.jpdev01.rinha.financial;
+package com.jpdev01.rinha.financial.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
