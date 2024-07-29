@@ -26,4 +26,4 @@ startTest() {
     done
 }
 
-runGatling
+startTest
